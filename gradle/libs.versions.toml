@@ -73,8 +73,8 @@ dagger-hilt-work                          = { module = "androidx.hilt:hilt-work"
 android-lottie                            = { module = "com.airbnb.android:lottie", version.ref = "android-lottie-ver" }
 apache-common                             = { module = "commons-io:commons-io", version.ref = "common-io-ver"}
 jackson-core                              = { module = "com.fasterxml.jackson.core:jackson-core", version.ref = "jackson-ver"}
-jackson-databind                          = { module = "'com.fasterxml.jackson.core:jackson-databind", version.ref = "jackson-ver"}
-jackson-annotations                       = { module = "'com.fasterxml.jackson.core:jackson-annotations", version.ref = "jackson-ver"}
+jackson-databind                          = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jackson-ver"}
+jackson-annotations                       = { module = "com.fasterxml.jackson.core:jackson-annotations", version.ref = "jackson-ver"}
 
 # test libraries
 test-junit                                = { module = "junit:junit", version.ref = "test-junit" }
