@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Pawxy Mp3 Downloader</string>
+    <string name="mp3_downloader">MP3 Downloader</string>
+    <string name="youtube_link">Youtube Link</string>
+    <string name="where_you_want_to_save_the_mp3">Where you want to save the MP3</string>
+    <string name="destination_folder">Destination Folder</string>
+    <string name="download">Download</string>
+    <string name="title">title</string>
+    <string name="downloading">Downloading..</string>
+    <string name="dash">--</string>
+    <string name="dsh2">-- /</string>
+    <string name="download_another_mp3">Download Another MP3</string>
+</resources>
