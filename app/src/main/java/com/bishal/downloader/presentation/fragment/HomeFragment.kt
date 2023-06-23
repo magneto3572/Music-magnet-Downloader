@@ -13,6 +13,24 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        setupListener()
     }
 
+    private fun setupListener(){
+        binding.apply {
+            downloadBtn.setOnClickListener {
+
+                if(editText.text.isNotBlank()){
+                    getUrlAndRequestFromLib(editText.text.trim().toString())
+                    editText.setText("")
+                }
+            }
+        }
+    }
+
+    private fun getUrlAndRequestFromLib(url: String) {
+
+
+    }
 }
