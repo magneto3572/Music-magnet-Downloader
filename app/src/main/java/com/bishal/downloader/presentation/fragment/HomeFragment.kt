@@ -1,10 +1,13 @@
 package com.bishal.downloader.presentation.fragment
 
 import android.Manifest
+import android.app.Activity
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.PermissionChecker
 import androidx.core.content.PermissionChecker.checkSelfPermission
@@ -13,6 +16,7 @@ import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.bishal.downloader.R
 import com.bishal.downloader.databinding.FragmentHomeBinding
+import com.bishal.downloader.domain.utils.Utils
 import com.bishal.downloader.domain.utils.superNavigate
 import com.bishal.downloader.presentation.basefragment.BaseFragment
 import com.bishal.downloader.presentation.viewmodel.HomeViewModel
@@ -31,6 +35,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     private var info : MutableStateFlow<VideoInfo?> = MutableStateFlow(null)
     private var url : String = String()
+    private var outputPath : String= String()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -40,8 +45,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     private fun setupListener(){
         binding.apply {
-            downloadBtn.setOnClickListener {
+            folderSelectionView.setOnClickListener {
+                openFileExplorer()
+            }
 
+            downloadBtn.setOnClickListener {
                 if (!isStoragePermissionGranted()) {
                     Toast.makeText(
                         requireContext(),
@@ -68,11 +76,29 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         }
     }
 
+    private val launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            //get directory path
+            outputPath = Utils.getDirectoryShortPath(result).toString()
+            binding.apply {
+                folderSelectionView.text = outputPath.toString()
+            }
+        } else {
+            Toast.makeText(requireContext(), "No directory selected", Toast.LENGTH_SHORT)
+                .show()
+        }
+    }
+
+    private fun openFileExplorer() {
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
+        launcher.launch(intent)
+    }
+
     private fun setupObserver(){
         lifecycleScope.launch{
             info.flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.RESUMED).collectLatest { info ->
                 if (info != null){
-                    val action =  HomeFragmentDirections.actionHomeFragmentToProgressFragment(info.fulltitle.toString(), info.likeCount.toString(), info.viewCount.toString(), info.thumbnail.toString(), url, info.fileSize)
+                    val action =  HomeFragmentDirections.actionHomeFragmentToProgressFragment(info.fulltitle.toString(), info.likeCount.toString(), info.viewCount.toString(), info.thumbnail.toString(), url, info.fileSize, outputPath.toString())
                     superNavigate(action)
                 }
             }
