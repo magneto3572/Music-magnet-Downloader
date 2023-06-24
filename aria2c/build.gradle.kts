@@ -5,14 +5,12 @@ plugins {
 }
 
 android {
-    namespace  = "com.bishal.ffmpeg"
     compileSdk = 34
 
     defaultConfig {
         minSdk = 24
         targetSdk = 34
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner  ="androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
@@ -24,19 +22,13 @@ android {
             )
         }
     }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
+    namespace =  "com.bishal.aria2c"
 
-    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-        kotlinOptions {
-            jvmTarget = JavaVersion.VERSION_1_8.toString()
-        }
-    }
 }
 
+
 dependencies {
+//    implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     implementation(project(":ytdlplibrary"))
     implementation(libs.androidx.core)

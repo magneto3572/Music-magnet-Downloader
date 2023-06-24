@@ -25,3 +25,4 @@ rootProject.name = "Pawxy Mp3 Downloader"
 include ':app'
 include ':ytdlplibrary'
 include ':ffmpeg'
+include ':aria2c'

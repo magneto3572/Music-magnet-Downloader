@@ -28,6 +28,7 @@ androidx-navigation-ui-ktx-ver            = "2.5.3"
 dagger                                    = "1.0.0"
 android-lottie-ver                        = "4.1.0"
 common-io-ver                             = "2.5"
+commonsCompressVer                        = '1.12'
 jackson-ver                               = "2.1.1"
 
 # test libraries-ver
@@ -72,6 +73,7 @@ dagger-hilt-compiler                      = { module = "androidx.hilt:hilt-compi
 dagger-hilt-work                          = { module = "androidx.hilt:hilt-work", version.ref = "dagger" }
 android-lottie                            = { module = "com.airbnb.android:lottie", version.ref = "android-lottie-ver" }
 apache-common                             = { module = "commons-io:commons-io", version.ref = "common-io-ver"}
+apache-common-compress                    = { module = "org.apache.commons:commons-compress", version.ref = "commonsCompressVer"}
 jackson-core                              = { module = "com.fasterxml.jackson.core:jackson-core", version.ref = "jackson-ver"}
 jackson-databind                          = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jackson-ver"}
 jackson-annotations                       = { module = "com.fasterxml.jackson.core:jackson-annotations", version.ref = "jackson-ver"}

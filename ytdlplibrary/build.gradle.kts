@@ -46,6 +46,7 @@ dependencies {
     androidTestImplementation(libs.test.ext.junit)
     androidTestImplementation(libs.test.espresso)
     implementation(libs.apache.common)
+    implementation(libs.apache.common.compress)
     implementation(libs.jackson.databind)
     implementation(libs.jackson.annotations)
 }

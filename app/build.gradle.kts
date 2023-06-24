@@ -57,6 +57,9 @@ android {
 
 dependencies {
 
+    implementation(project(":ffmpeg"))
+    implementation(project(":ytdlplibrary"))
+    implementation(project(":aria2c"))
     implementation(libs.androidx.legacy)
     implementation(libs.androidx.lifecycle.livedata)
     implementation(libs.androidx.lifecycle.viewmodel)
