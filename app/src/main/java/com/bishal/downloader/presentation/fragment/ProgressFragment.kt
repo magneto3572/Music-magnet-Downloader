@@ -35,6 +35,8 @@ class ProgressFragment : BaseFragment<FragmentProgressBinding, ProgressViewModel
         Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).absolutePath
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+
         setupView()
         getUrlAndRequestFromLib()
     }
@@ -71,9 +73,6 @@ class ProgressFragment : BaseFragment<FragmentProgressBinding, ProgressViewModel
                 request.addOption("--external-downloader-args", "aria2c:\"--summary-interval=1\"")
                 YoutubeDL.getInstance().execute(request, "MyDlProcess") { progress, o2, line ->
                     lifecycleScope.launch(Dispatchers.Main){
-                        Log.d("LogTagProgress", progress.toInt().toString())
-                        Log.d("LogTagProgress2", o2.toString())
-                        Log.d("LogTagProgress3", line.toString())
                         binding.apply {
                             progressData.text = line.toString()
                             progressBar.progress = progress.toInt()
@@ -87,7 +86,7 @@ class ProgressFragment : BaseFragment<FragmentProgressBinding, ProgressViewModel
                     binding.progressBar.setIndicatorColor(resources.getColor(R.color.indicator, null))
                     convertToMp3(
                         "$tempStorage/PawxyDownloader/"+args.title,
-                        "$tempStorage/PawxyDownloader/"
+                        args.outputpath
                     )
                     delay(500)
                     binding.textView5.text = "Saving.."

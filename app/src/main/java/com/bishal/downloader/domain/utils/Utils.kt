@@ -40,14 +40,14 @@ object Utils {
 //        return File(pathSDCard)
 //    }
 
-    fun getDirectoryShortPath(result: ActivityResult): String{
+    fun getDirectoryShortPath(result: ActivityResult): Uri{
         val data: Intent? = result.data
         val uri = data?.data
         val docUri = DocumentsContract.buildDocumentUriUsingTree(
             uri,
             DocumentsContract.getTreeDocumentId(uri)
         )
-        return uri?.path.toString()
+        return docUri
     }
 
     fun InputStream.toFile(path: String) {
@@ -56,7 +56,6 @@ object Utils {
 
     fun getConvertedFile(folder: String, fileName: String): File {
         val f = File(folder)
-
         if (!f.exists())
             f.mkdirs()
 
@@ -102,6 +101,10 @@ object Utils {
 //        // return timer string
 //        return finalTimerString
 //    }
+
+
 }
+
+
 
 

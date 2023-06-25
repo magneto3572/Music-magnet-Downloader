@@ -1,9 +1,10 @@
 package com.bishal.downloader.presentation.fragment
 
+import RealPathUtil
 import android.Manifest
 import android.app.Activity
 import android.content.Intent
-import android.os.Build
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -35,7 +36,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     private var info : MutableStateFlow<VideoInfo?> = MutableStateFlow(null)
     private var url : String = String()
-    private var outputPath : String= String()
+    private var outputPath : String? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -83,7 +84,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     private val launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             //get directory path
-            outputPath = Utils.getDirectoryShortPath(result).toString()
+            grantUriPermission(result?.data?.data!!)
+            outputPath = RealPathUtil.getRealPath(requireContext(), Utils.getDirectoryShortPath(result))
             binding.apply {
                 folderSelectionView.text = outputPath.toString()
             }
@@ -91,6 +93,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             Toast.makeText(requireContext(), "No directory selected", Toast.LENGTH_SHORT)
                 .show()
         }
+    }
+
+    private fun grantUriPermission(uri: Uri) {
+        requireContext().applicationContext.contentResolver.takePersistableUriPermission(
+            uri,
+            Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+        )
     }
 
     private fun openFileExplorer() {
@@ -102,7 +111,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         lifecycleScope.launch{
             info.flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.CREATED).collectLatest { info ->
                 if (info != null){
-                    val action =  HomeFragmentDirections.actionHomeFragmentToProgressFragment(info.fulltitle.toString(), info.likeCount.toString(), info.viewCount.toString(), info.thumbnail.toString(), url, info.fileSize, outputPath.toString())
+                    val action =  HomeFragmentDirections.actionHomeFragmentToProgressFragment(info.fulltitle.toString(), info.likeCount.toString(), info.viewCount.toString(), info.thumbnail.toString(), url, info.fileSize, outputPath.toString(), info.title?.trim().toString())
                     superNavigate(action)
                 }
             }
