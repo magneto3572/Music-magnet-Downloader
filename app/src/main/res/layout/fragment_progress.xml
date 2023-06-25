@@ -240,6 +240,7 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:backgroundTint="#892eff"
+        android:visibility="gone"
         android:text="@string/download_another_mp3"
         android:fontFamily="@font/jakartasanssemibold"
         app:cornerRadius="8dp"

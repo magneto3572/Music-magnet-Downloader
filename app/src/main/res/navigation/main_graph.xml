@@ -13,10 +13,7 @@
         tools:layout="@layout/fragment_home" >
         <action
             android:id="@+id/action_homeFragment_to_progressFragment"
-            app:destination="@id/progressFragment"
-            app:launchSingleTop="true"
-            app:popUpTo="@id/progressFragment"
-            app:popUpToInclusive="true" />
+            app:destination="@id/progressFragment" />
     </fragment>
     <fragment
         android:id="@+id/progressFragment"

@@ -45,6 +45,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     private fun setupListener(){
         binding.apply {
+            imageView3.setOnClickListener {
+                editText.setText("")
+            }
+
             folderSelectionView.setOnClickListener {
                 openFileExplorer()
             }
@@ -96,7 +100,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     private fun setupObserver(){
         lifecycleScope.launch{
-            info.flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.RESUMED).collectLatest { info ->
+            info.flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.CREATED).collectLatest { info ->
                 if (info != null){
                     val action =  HomeFragmentDirections.actionHomeFragmentToProgressFragment(info.fulltitle.toString(), info.likeCount.toString(), info.viewCount.toString(), info.thumbnail.toString(), url, info.fileSize, outputPath.toString())
                     superNavigate(action)
@@ -114,25 +118,23 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 }
                 info.value = streamInfo.await()
             }
+        }.getOrElse {
+            it.printStackTrace()
         }
     }
 
     private fun isStoragePermissionGranted(): Boolean {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                == PermissionChecker.PERMISSION_GRANTED
-            ) {
-                true
-            } else {
-                ActivityCompat.requestPermissions(
-                    requireActivity(),
-                    arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                    1
-                )
-                false
-            }
-        } else {
+        return if (checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            == PermissionChecker.PERMISSION_GRANTED
+        ) {
             true
+        } else {
+            ActivityCompat.requestPermissions(
+                requireActivity(),
+                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                1
+            )
+            false
         }
     }
 }

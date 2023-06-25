@@ -6,20 +6,23 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import coil.transform.RoundedCornersTransformation
 import com.arthenica.mobileffmpeg.FFmpeg
+import com.bishal.downloader.R
 import com.bishal.downloader.databinding.FragmentProgressBinding
 import com.bishal.downloader.domain.utils.Load
+import com.bishal.downloader.domain.utils.Utils
 import com.bishal.downloader.presentation.basefragment.BaseFragment
 import com.bishal.downloader.presentation.viewmodel.ProgressViewModel
 import com.bishal.ytdlplibrary.YoutubeDL
 import com.bishal.ytdlplibrary.YoutubeDLRequest
-import com.bishal.downloader.domain.utils.Utils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.IOException
 
@@ -32,9 +35,16 @@ class ProgressFragment : BaseFragment<FragmentProgressBinding, ProgressViewModel
         Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).absolutePath
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         setupView()
         getUrlAndRequestFromLib()
+    }
+
+    private fun setupListener(){
+        binding.apply {
+            materialButton3.setOnClickListener {
+                findNavController().navigateUp()
+            }
+        }
     }
 
     private fun setupView() {
@@ -68,14 +78,24 @@ class ProgressFragment : BaseFragment<FragmentProgressBinding, ProgressViewModel
                             progressData.text = line.toString()
                             progressBar.progress = progress.toInt()
                         }
-                        delay(1500)
-                        if (line.contains("100%") && progress.toInt()>=80){
-                            convertToMp3(
-                                "$tempStorage/PawxyDownloader/"+args.title,
-                                "$tempStorage/PawxyDownloader/"
-                            )
-                        }
                     }
+                }
+                withContext(Dispatchers.Main){
+                    delay(1000)
+                    binding.progressBar.progress = 100
+                    binding.textView5.text = "Converting.."
+                    binding.progressBar.setIndicatorColor(resources.getColor(R.color.indicator, null))
+                    convertToMp3(
+                        "$tempStorage/PawxyDownloader/"+args.title,
+                        "$tempStorage/PawxyDownloader/"
+                    )
+                    delay(500)
+                    binding.textView5.text = "Saving.."
+                    binding.progressBar.setIndicatorColor(resources.getColor(R.color.savingcolor, null))
+                    delay(500)
+                    binding.textView5.text = "Success.."
+                    binding.progressBar.setIndicatorColor(resources.getColor(R.color.successcolor, null))
+                    binding.materialButton3.visibility = View.VISIBLE
                 }
             }
         }.getOrElse {
