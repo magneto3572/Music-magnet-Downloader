@@ -1,17 +1,19 @@
 package com.bishal.downloader.presentation.fragment
 
 import RealPathUtil
-import android.Manifest
+import android.Manifest.permission.MANAGE_EXTERNAL_STORAGE
 import android.app.Activity
+import android.app.AppOpsManager
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.app.ActivityCompat
-import androidx.core.content.PermissionChecker
-import androidx.core.content.PermissionChecker.checkSelfPermission
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
@@ -38,11 +40,15 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     private var url : String = String()
     private var outputPath : String? = null
 
+    @RequiresApi(Build.VERSION_CODES.Q)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         setupListener()
         setupObserver()
     }
+
+
 
     private fun setupListener(){
         binding.apply {
@@ -55,22 +61,20 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             }
 
             downloadBtn.setOnClickListener {
-                if (!isStoragePermissionGranted()) {
-                    Toast.makeText(
-                        requireContext(),
-                        "Please Grant Storage Permission and Retry",
-                        Toast.LENGTH_LONG
-                    ).show()
-                    return@setOnClickListener
-                }
-
-
                 if(editText.text.isNotBlank()){
+                    folderSelectionView.isEnabled = false
+                    folderSelectionView.isClickable = false
+                    editText.isClickable =  false
+                    editText.isEnabled =  false
                     editText.isClickable = false
                     downloadBtn.text = "Grabbing Info.."
                     downloadBtn.setIconResource(R.drawable.icons)
                     getStreamInfo(editText.text.trim().toString())
                 }else{
+                    folderSelectionView.isEnabled = true
+                    folderSelectionView.isClickable = true
+                    editText.isClickable =  true
+                    editText.isEnabled =  true
                     Toast.makeText(
                         requireContext(),
                         "Url cannot be empty",
@@ -111,7 +115,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         lifecycleScope.launch{
             info.flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.CREATED).collectLatest { info ->
                 if (info != null){
-                    val action =  HomeFragmentDirections.actionHomeFragmentToProgressFragment(info.fulltitle.toString(), info.likeCount.toString(), info.viewCount.toString(), info.thumbnail.toString(), url, info.fileSize, outputPath.toString(), info.title?.trim().toString())
+                    val action =  HomeFragmentDirections.actionHomeFragmentToProgressFragment(info.fulltitle.toString(), info.likeCount.toString(), info.viewCount.toString(), info.thumbnail.toString(), url, info.fileSize, outputPath.toString(), info.title?.trim().toString(), info.id.toString())
                     superNavigate(action)
                 }
             }
@@ -132,18 +136,38 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         }
     }
 
-    private fun isStoragePermissionGranted(): Boolean {
-        return if (checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
-            == PermissionChecker.PERMISSION_GRANTED
-        ) {
-            true
+    @RequiresApi(Build.VERSION_CODES.Q)
+    fun isExternalStorageManager(
+        packageName: String,
+        context: Context,
+        packageManger: PackageManager
+    ): Boolean {
+        return hasPermission(packageName, MANAGE_EXTERNAL_STORAGE, context, packageManger)
+    }
+
+
+    @RequiresApi(Build.VERSION_CODES.Q)
+    fun hasPermission(
+        packageName: String,
+        permission: String,
+        context: Context,
+        packageManger: PackageManager
+    ): Boolean {
+        val granted: Boolean
+        val appOps = context.getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
+
+        val info = packageManger.getApplicationInfo(packageName, 0)
+        val mode = appOps.unsafeCheckOpNoThrow(
+            AppOpsManager.permissionToOp(permission)!!,
+            info.uid,
+            packageName
+        )
+        granted = if (mode == AppOpsManager.MODE_DEFAULT) {
+            context.checkCallingOrSelfPermission(permission) == PackageManager.PERMISSION_GRANTED
         } else {
-            ActivityCompat.requestPermissions(
-                requireActivity(),
-                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                1
-            )
-            false
+            (mode == AppOpsManager.MODE_ALLOWED)
         }
+
+        return granted
     }
 }

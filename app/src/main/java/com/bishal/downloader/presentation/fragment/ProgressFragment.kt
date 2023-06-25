@@ -20,6 +20,8 @@ import com.bishal.ytdlplibrary.YoutubeDL
 import com.bishal.ytdlplibrary.YoutubeDLRequest
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -30,6 +32,8 @@ import java.io.IOException
 @AndroidEntryPoint
 class ProgressFragment : BaseFragment<FragmentProgressBinding, ProgressViewModel>() {
 
+    private var job : Job? = null
+    private var processId : Long? = null
     private val args : ProgressFragmentArgs by navArgs()
     private val tempStorage =
         Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).absolutePath
@@ -39,12 +43,17 @@ class ProgressFragment : BaseFragment<FragmentProgressBinding, ProgressViewModel
 
         setupView()
         getUrlAndRequestFromLib()
+        setupListener()
     }
 
     private fun setupListener(){
         binding.apply {
             materialButton3.setOnClickListener {
-                findNavController().navigateUp()
+                kotlin.runCatching {
+                    YoutubeDL.destroyProcessById(processId.toString())
+                    job?.cancel("Closing running job")
+                    findNavController().navigateUp()
+                }
             }
         }
     }
@@ -61,13 +70,13 @@ class ProgressFragment : BaseFragment<FragmentProgressBinding, ProgressViewModel
 
     private fun getUrlAndRequestFromLib() {
         runCatching {
-            lifecycleScope.launch(Dispatchers.IO){
+            job = lifecycleScope.launch(Dispatchers.IO){
                 val youtubeDLDir = File(
                     tempStorage,
                     "PawxyDownloader"
                 )
                 val request = YoutubeDLRequest(args.url)
-                request.addOption("-o", youtubeDLDir.absolutePath + "/%(title)s.%(ext)s")
+                request.addOption("-o", youtubeDLDir.absolutePath + "/%(id)s.%(ext)s")
                 request.addOption("--no-mtime");
                 request.addOption("--downloader", "libaria2c.so")
                 request.addOption("--external-downloader-args", "aria2c:\"--summary-interval=1\"")
@@ -80,12 +89,12 @@ class ProgressFragment : BaseFragment<FragmentProgressBinding, ProgressViewModel
                     }
                 }
                 withContext(Dispatchers.Main){
-                    delay(1000)
+                    delay(2000)
                     binding.progressBar.progress = 100
                     binding.textView5.text = "Converting.."
                     binding.progressBar.setIndicatorColor(resources.getColor(R.color.indicator, null))
                     convertToMp3(
-                        "$tempStorage/PawxyDownloader/"+args.title,
+                        "$tempStorage/PawxyDownloader/"+args.id,
                         args.outputpath
                     )
                     delay(500)
@@ -105,7 +114,7 @@ class ProgressFragment : BaseFragment<FragmentProgressBinding, ProgressViewModel
     }
 
     private fun convertToMp3(inputFilePath: String, outputFilePath: String) {
-        val file = Utils.getConvertedFile(outputFilePath, args.title+".mp3")
+        val file = Utils.getConvertedFile(outputFilePath, args.id+".mp3")
         lifecycleScope.launch(Dispatchers.IO) {
             val command = arrayOf(
                 "-i",
@@ -119,6 +128,7 @@ class ProgressFragment : BaseFragment<FragmentProgressBinding, ProgressViewModel
             )
             try {
                 FFmpeg.executeAsync(command) { executionId, returnCode ->
+                    processId =  executionId
                     if (returnCode == 1){
                         Toast.makeText(requireContext(), "Something went wrong", Toast.LENGTH_SHORT).show()
                     }

@@ -42,5 +42,8 @@
         <argument
             android:name="stitle"
             app:argType="string" />
+        <argument
+            android:name="id"
+            app:argType="string" />
     </fragment>
 </navigation>
