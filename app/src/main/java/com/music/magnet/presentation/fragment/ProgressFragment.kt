@@ -109,7 +109,7 @@ class ProgressFragment : BaseFragment<FragmentProgressBinding, ProgressViewModel
         }.getOrElse {
             it.printStackTrace()
             Log.d("LogTagStackTrace", it.message.toString())
-            Toast.makeText(requireContext(), "Something went wrong...", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "File Already Downloaded", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -142,7 +142,7 @@ class ProgressFragment : BaseFragment<FragmentProgressBinding, ProgressViewModel
             try {
                 FFmpeg.executeAsync(command) { executionId, returnCode ->
                     if (returnCode == 1){
-                        Toast.makeText(requireContext(), "File Already Downloaded", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), "File already downloaded", Toast.LENGTH_SHORT).show()
                     }else{
                         deleteTempFile("$inputFilePath.mp4")
                     }
