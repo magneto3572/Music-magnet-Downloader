@@ -1,9 +1,9 @@
 package com.yausername.aria2c
 
 import android.content.Context
-import com.bishal.ytdlplibrary.YoutubeDLException
-import com.bishal.ytdlplibrary.utils.SharedPrefsHelper
-import com.bishal.ytdlplibrary.utils.utils.ZipUtils
+import com.music.ytdlplibrary.YoutubeDLException
+import com.music.ytdlplibrary.utils.SharedPrefsHelper
+import com.music.ytdlplibrary.utils.utils.ZipUtils
 import org.apache.commons.io.FileUtils
 import java.io.File
 

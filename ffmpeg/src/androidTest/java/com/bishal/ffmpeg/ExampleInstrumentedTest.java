@@ -1,4 +1,4 @@
-package com.bishal.ffmpeg;
+package com.music.ffmpeg;
 
 import android.content.Context;
 import androidx.test.platform.app.InstrumentationRegistry;

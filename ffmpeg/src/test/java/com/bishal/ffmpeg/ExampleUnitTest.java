@@ -1,4 +1,4 @@
-package com.bishal.ffmpeg;
+package com.music.ffmpeg;
 
 import org.junit.Test;
 

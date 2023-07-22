@@ -22,7 +22,7 @@ android {
             )
         }
     }
-    namespace =  "com.bishal.aria2c"
+    namespace =  "com.music.aria2c"
 
 }
 

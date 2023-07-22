@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.bishal.ytdlplibrary"
+    namespace = "com.music.ytdlplibrary"
     compileSdk = 33
 
     defaultConfig {

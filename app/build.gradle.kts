@@ -9,11 +9,11 @@ plugins {
 }
 
 android {
-    namespace = "com.bishal.downloader"
+    namespace = "com.music.magnet"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.bishal.downloader"
+        applicationId = "com.music.magnet"
         minSdk = 24
         targetSdk = 34
         versionCode = 1

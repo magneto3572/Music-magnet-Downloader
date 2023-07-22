@@ -8,7 +8,7 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.bishal.downloader.presentation.fragment.HomeFragment"
+        android:name="com.music.magnet.presentation.fragment.HomeFragment"
         android:label="fragment_home"
         tools:layout="@layout/fragment_home" >
         <action
@@ -17,7 +17,7 @@
     </fragment>
     <fragment
         android:id="@+id/progressFragment"
-        android:name="com.bishal.downloader.presentation.fragment.ProgressFragment"
+        android:name="com.music.magnet.presentation.fragment.ProgressFragment"
         android:label="fragment_progress"
         tools:layout="@layout/fragment_progress" >
         <argument
